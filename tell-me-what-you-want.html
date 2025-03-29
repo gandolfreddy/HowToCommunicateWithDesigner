@@ -154,7 +154,8 @@
     #info-section-b-info,
     #info-section-c-info,
     #info-section-d-info,
-    #contact-info {
+    #contact-info,
+    #user-name-info {
       margin-bottom: 15px;
     }
 
@@ -340,7 +341,16 @@
               type="text"
               id="contact-info-input"
               v-model="contactInfo"
-              placeholder="請輸入想要的聯絡資訊文字"
+              placeholder="請輸入想要的聯絡資訊文字；若為過度頁面無需聯絡資訊，則可「無」"
+            >
+          </div>
+          <div id="user-name-info">
+            <h3>填入姓名</h3>
+            <input
+              type="text"
+              id="user-name-input"
+              v-model="userName"
+              placeholder="請輸入您的姓名"
             >
           </div>
         </div>
@@ -361,6 +371,7 @@
             infoSectionC: 'C 資訊區塊',
             infoSectionD: 'D 資訊區塊',
             contactInfo: '聯絡資訊',
+            userName: '',
             selectedLayout: 'one-zone',
             selectedVariant: 'variant-1',
             variantType: 'variant-1',
@@ -401,8 +412,18 @@
             this.variantType = this.selectedVariant;
           },
           exportData() {
+            // 如果姓名欄位為空，則提示使用者先填寫姓名
+            if (!this.userName.trim()) {
+              alert("請先填寫姓名才可匯出畫面！！");
+              return;
+            }
             // 複製整個文件（包含 HTML 與 CSS）
             const clonedDoc = document.documentElement.cloneNode(true);
+
+            const templateTitle = clonedDoc.querySelector('#app>h1');
+            if (templateTitle) {
+              templateTitle.textContent = `${this.userName.trim()} - ${templateTitle.textContent}`
+            }
 
             // 移除複製內容中的 #right-column 元素
             const rightColumn = clonedDoc.querySelector('#right-column');
@@ -430,7 +451,9 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'exported.html';
+            const now = new Date();
+            const formattedDate = now.toISOString().replace(/[:]/g, '-').split('.')[0];
+            a.download = `${this.userName.trim()}_${formattedDate}_exported_design.html`;
             a.click();
             URL.revokeObjectURL(url);
           }
