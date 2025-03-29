@@ -401,7 +401,7 @@
             this.variantType = this.selectedVariant;
           },
           exportData() {
-            // Determine current preview zone based on selected layout
+            // 根據選擇版型決定要複製哪個預覽區塊
             let currentZoneId = "";
             if (this.selectedLayout === 'one-zone') {
               currentZoneId = "one-info-zone";
@@ -414,18 +414,23 @@
             }
             const zoneElement = document.getElementById(currentZoneId);
             const clonedElement = zoneElement.cloneNode(true);
-            // Added style content to match current #left-column styling
             const styleContent = `
+              /* #left-column 樣式 */
               #left-column {
+                width: 50%;
+                padding: 20px;
+                background-color: #f7fafc;
+                border-right: 1px solid #e2e8f0;
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                padding: 20px;
+                gap: 15px;
               }
+              /* 固定主標題與聯絡資訊高度 */
               #left-column .main-title,
               #left-column .contact {
                 height: 60px;
               }
+              /* 主標題樣式 */
               .main-title {
                 font-size: 24px;
                 background: #93c0eb;
@@ -436,6 +441,7 @@
                 align-items: center;
                 justify-content: center;
               }
+              /* 資訊區塊樣式 */
               .info-section-a,
               .info-section-b,
               .info-section-c,
@@ -450,6 +456,7 @@
                 align-items: center;
                 justify-content: center;
               }
+              /* 聯絡資訊樣式 */
               .contact {
                 font-size: 18px;
                 background: #a8e4c1;
@@ -460,6 +467,7 @@
                 align-items: center;
                 justify-content: center;
               }
+              /* 變體區塊 */
               .variant-1 {
                 display: flex;
                 flex-direction: column;
@@ -470,22 +478,25 @@
                 display: flex;
                 gap: 15px;
                 flex: 1;
-              }`;
-            // Build export HTML document with added style block
+              }
+            `;
+
+            // 建立完整的 HTML 檔案，並將 style 區塊嵌入
             const exportHTML = `
-<!DOCTYPE html>
-<html lang="zh-TW">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>匯出設計稿</title>
-    <style>${styleContent}</style>
-  </head>
-  <body>
-    ${clonedElement.outerHTML}
-  </body>
-</html>`;
-            // Create a blob and trigger download
+          <!DOCTYPE html>
+          <html lang="zh-TW">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>匯出設計稿</title>
+              <style>${styleContent}</style>
+            </head>
+            <body>
+              ${clonedElement.outerHTML}
+            </body>
+          </html>`;
+
+            // 建立 blob 並觸發下載
             const blob = new Blob([exportHTML], { type: "text/html" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
