@@ -454,7 +454,7 @@
             const modifiedHTML = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
             const blob = new Blob([modifiedHTML], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
-            const now = new Date();
+            const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
             const formattedDate = now.toISOString().replace(/[:]/g, '-').split('.')[0];
             const a = document.createElement('a');
             a.href = url;
@@ -489,7 +489,7 @@
               leftColumn.style.width = '100%';
             }
             const modifiedHTML = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
-            const now = new Date();
+            const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
             const formattedDate = now.toISOString().replace(/[:]/g, '-').split('.')[0];
             // 使用 JSZip 建立壓縮檔並加入 HTML 檔案
             const zip = new JSZip();
