@@ -112,7 +112,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      /* 移除 flex: 1，改為固定高度 */
     }
 
     /* 變體區塊 */
@@ -402,7 +401,42 @@
             this.variantType = this.selectedVariant;
           },
           exportData() {
-            // 實作匯出功能
+            // Determine current preview zone based on selected layout
+            let currentZoneId = "";
+            if (this.selectedLayout === 'one-zone') {
+              currentZoneId = "one-info-zone";
+            } else if (this.selectedLayout === 'two-zone') {
+              currentZoneId = "two-info-zone";
+            } else if (this.selectedLayout === 'three-zone') {
+              currentZoneId = "three-info-zone";
+            } else if (this.selectedLayout === 'four-zone') {
+              currentZoneId = "four-info-zone";
+            }
+            const zoneElement = document.getElementById(currentZoneId);
+            const clonedElement = zoneElement.cloneNode(true);
+            // Build export HTML document
+            const exportHTML = `
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>匯出設計稿</title>
+  </head>
+  <body>
+    ${clonedElement.outerHTML}
+  </body>
+</html>`;
+            // Create a blob and trigger download
+            const blob = new Blob([exportHTML], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "exported_design.html";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
           }
         }
       }).mount('#app');
