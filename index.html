@@ -425,6 +425,11 @@
               templateTitle.textContent = `${this.userName.trim()} - ${templateTitle.textContent}`
             }
 
+            const pageTitle = clonedDoc.querySelector('title');
+            if (pageTitle) {
+              pageTitle.textContent = `${this.userName.trim()} 的需求`
+            }
+
             // 移除複製內容中的 #right-column 元素
             const rightColumn = clonedDoc.querySelector('#right-column');
             if (rightColumn) {
