@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/vue@3/dist/vue.global.css"
+  >
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  > -->
+  <title>使用者與平面設計師簡易溝通工具</title>
+  <style>
+    /* 基本設定 */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'ubuntu mono';
+    }
+
+    /* #app 區塊 */
+    #app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100vw;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    /* .container 區塊 */
+    .container {
+      display: flex;
+      width: 80vw;
+      height: 85vh;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #ccc;
+    }
+
+    /* #left-column 區塊 */
+    #left-column {
+      display: flex;
+      width: 50%;
+      padding: 20px;
+      background-color: #e0e0e0;
+      border-right: 1px solid #ccc;
+    }
+
+    #one-info-zone,
+    #two-info-zone,
+    #three-info-zone,
+    #four-info-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 5px;
+    }
+
+
+    /* 標題、各資訊與聯絡資料區塊 */
+    .main-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+      border: 5px solid rgb(50, 95, 95);
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #f6f6f6;
+      width: 100%;
+      height: 10%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-section-a,
+    .info-section-b,
+    .info-section-c,
+    .info-section-d {
+      font-size: 18px;
+      margin-bottom: 10px;
+      border: 5px solid rgb(100, 95, 95);
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #f6f6f6;
+      width: 100%;
+      flex: 1;
+      min-height: 50px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 變體區塊 */
+    .variant-2 {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      flex: 1;
+      min-height: 50px;
+    }
+
+    .variant-1 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+    }
+
+    .contact {
+      font-size: 18px;
+      margin-bottom: 10px;
+      border: 5px solid rgb(200, 95, 95);
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #f6f6f6;
+      width: 100%;
+      height: 10%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* #right-column 區塊 */
+    #right-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 50%;
+      height: 100%;
+      padding: 20px;
+    }
+
+    /* 標題、各資訊與聯絡資料區塊 */
+    .data-input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+    }
+
+    #layout-selector,
+    #main-title-info,
+    #info-section-a-info,
+    #info-section-b-info,
+    #info-section-c-info,
+    #info-section-d-info,
+    #contact-info {
+      display: flex;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f6f6f6;
+      width: 100%;
+    }
+
+    .info-container {
+      width: 100%;
+      overflow-y: auto;
+      max-height: 30%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <!-- 工具標題 -->
+    <h1> Tell me what you want 😎 </h1>
+    <div class="container">
+      <div id="left-column">
+        <div
+          id="one-info-zone"
+          v-show="selectedLayout === 'one-zone'"
+        >
+          <div class="main-title">
+            {{ mainTitle }}
+          </div>
+          <div class="info-section-a">
+            {{ infoSectionA }}
+          </div>
+          <div class="contact">
+            {{ contactInfo }}
+          </div>
+        </div>
+        <div
+          id="two-info-zone"
+          v-show="selectedLayout === 'two-zone'"
+        >
+          <div class="main-title">
+            {{ mainTitle }}
+          </div>
+          <div class="info-section-a">
+            {{ infoSectionA }}
+          </div>
+          <div class="info-section-b">
+            {{ infoSectionB }}
+          </div>
+          <div class="contact">
+            {{ contactInfo }}
+          </div>
+        </div>
+        <div
+          id="three-info-zone"
+          v-show="selectedLayout === 'three-zone'"
+        >
+          <div class="main-title">
+            {{ mainTitle }}
+          </div>
+          <div class="info-section-a">
+            {{ infoSectionA }}
+          </div>
+          <div :class="variantType">
+            <div class="info-section-b">
+              {{ infoSectionB }}
+            </div>
+            <div class="info-section-c">
+              {{ infoSectionC }}
+            </div>
+          </div>
+          <div class="contact">
+            {{ contactInfo }}
+          </div>
+        </div>
+        <div
+          id="four-info-zone"
+          v-show="selectedLayout === 'four-zone'"
+        >
+          <div class="main-title">
+            {{ mainTitle }}
+          </div>
+          <div class="info-section-a">
+            {{ infoSectionA }}
+          </div>
+          <div class="info-section-b">
+            {{ infoSectionB }}
+          </div>
+          <div :class="variantType">
+            <div class="info-section-c">
+              {{ infoSectionC }}
+            </div>
+            <div class="info-section-d">
+              {{ infoSectionD }}
+            </div>
+          </div>
+          <div class="contact">
+            {{ contactInfo }}
+          </div>
+        </div>
+      </div>
+      <div id="right-column">
+        <div class="data-input-container">
+          <div id="layout-selector">
+            <h3>選擇版型</h3>
+            <select
+              v-model="selectedLayout"
+              @change="changeLayout"
+            >
+              <option value="one-zone">1 個資訊區塊版型</option>
+              <option value="two-zone">2 個資訊區塊版型</option>
+              <option value="three-zone">3 個資訊區塊版型</option>
+              <option value="four-zone">4 個資訊區塊版型</option>
+            </select>
+            <div
+              id="variant-selector"
+              v-if="selectedLayout !== 'one-zone' && selectedLayout !== 'two-zone'"
+            >
+              <h3>選擇子版型</h3>
+              <select
+                v-model="selectedVariant"
+                @change="changeVariantLayout"
+              >
+                <option value="variant-1">子版型 1</option>
+                <option value="variant-2">子版型 2</option>
+              </select>
+            </div>
+          </div>
+          <div id="main-title-info">
+            <h3>填入標題</h3>
+            <input
+              id="main-title-input"
+              type="text"
+              v-model="mainTitle"
+              placeholder="請輸入想要的標題文字"
+            />
+          </div>
+          <div class="info-container">
+            <div id="info-section-a-info">
+              <h3>填入資訊區塊 A</h3>
+              <textarea
+                id="info-section-a-textarea"
+                v-model="infoSectionA"
+                placeholder="請輸入想要的資訊區塊 A 文字"
+                rows="4"
+                cols="50"
+              ></textarea>
+            </div>
+            <div
+              id="info-section-b-info"
+              v-if="selectedLayout !== 'one-zone'"
+            >
+              <h3>填入資訊區塊 B</h3>
+              <textarea
+                id="info-section-b-textarea"
+                v-model="infoSectionB"
+                placeholder="請輸入想要的資訊區塊 B 文字"
+                rows="4"
+                cols="50"
+              ></textarea>
+            </div>
+            <div
+              id="info-section-c-info"
+              v-if="selectedLayout === 'three-zone' || selectedLayout === 'four-zone'"
+            >
+              <h3>填入資訊區塊 C</h3>
+              <textarea
+                id="info-section-c-textarea"
+                v-model="infoSectionC"
+                placeholder="請輸入想要的資訊區塊 C 文字"
+                rows="4"
+                cols="50"
+              ></textarea>
+            </div>
+            <div
+              id="info-section-d-info"
+              v-if="selectedLayout === 'four-zone'"
+            >
+              <h3>填入資訊區塊 D</h3>
+              <textarea
+                id="info-section-d-textarea"
+                v-model="infoSectionD"
+                placeholder="請輸入想要的資訊區塊 D 文字"
+                rows="4"
+                cols="50"
+              ></textarea>
+            </div>
+          </div>
+          <div id="contact-info">
+            <h3>填入聯絡資訊</h3>
+            <input
+              type="text"
+              id="contact-info-input"
+              v-model="contactInfo"
+              placeholder="請輸入想要的聯絡資訊文字"
+            >
+          </div>
+        </div>
+        <button
+          id="export-button"
+          @click="exportData"
+        >匯出</button>
+      </div>
+    </div>
+
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            mainTitle: '主標題',
+            infoSectionA: 'A 資訊區塊',
+            infoSectionB: 'B 資訊區塊',
+            infoSectionC: 'C 資訊區塊',
+            infoSectionD: 'D 資訊區塊',
+            contactInfo: '聯絡資訊',
+            selectedLayout: 'one-zone',
+            selectedVariant: 'variant-1',
+            variantType: 'variant-1',
+          };
+        },
+        mounted() {
+          /* 預設顯示 1 資訊區塊版型 */
+          this.changeLayout();
+        },
+        methods: {
+          /* 設定標題與資訊區塊內容 */
+          setInfo(title, infoA, infoB, infoC, infoD, contact) {
+            this.mainTitle = title;
+            this.infoSectionA = infoA;
+            this.infoSectionB = infoB;
+            this.infoSectionC = infoC;
+            this.infoSectionD = infoD;
+            this.contactInfo = contact;
+          },
+          /* 根據選擇的版型更新資訊區塊 */
+          changeLayout() {
+            switch (this.selectedLayout) {
+              case 'one-zone':
+                this.setInfo(
+                  '主標題',
+                  'A 資訊區塊',
+                  '',
+                  '',
+                  '',
+                  '聯絡資訊'
+                );
+                break;
+              case 'two-zone':
+                this.setInfo(
+                  '主標題',
+                  'A 資訊區塊',
+                  'B 資訊區塊',
+                  '',
+                  '',
+                  '聯絡資訊'
+                );
+                break;
+              case 'three-zone':
+                this.setInfo(
+                  '主標題',
+                  'A 資訊區塊',
+                  'B 資訊區塊',
+                  'C 資訊區塊',
+                  '',
+                  '聯絡資訊'
+                );
+                break;
+              case 'four-zone':
+                this.setInfo(
+                  '主標題',
+                  'A 資訊區塊',
+                  'B 資訊區塊',
+                  'C 資訊區塊',
+                  'D 資訊區塊',
+                  '聯絡資訊'
+                );
+                break;
+              default:
+                this.setInfo(
+                  '主標題',
+                  'A 資訊區塊',
+                  '',
+                  '',
+                  '',
+                  '聯絡資訊'
+                );
+                break;
+            }
+          },
+          /* 根據選擇的子版型更新資訊區塊 */
+          changeVariantLayout() {
+            switch (this.selectedVariant) {
+              case 'variant-1':
+                this.variantType = 'variant-1';
+                break;
+              case 'variant-2':
+                this.variantType = 'variant-2';
+                break;
+              default:
+                this.variantType = 'variant-1';
+                break;
+            }
+          },
+          /* 匯出功能：此功能可匯出目前線稿設計圖的 HTML 檔 */
+          exportData() {
+          }
+        }
+      }).mount('#app');
+    </script>
+</body>
+
+</html>
