@@ -7,11 +7,14 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0"
   />
+  <!-- 載入 Vue 3 -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <link
     rel="stylesheet"
     href="https://unpkg.com/vue@3/dist/vue.global.css"
   >
+  <!-- 載入 JSZip -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
   <title>使用者與平面設計師簡易溝通工具</title>
   <style>
     /* 重置與基本設定 */
@@ -183,7 +186,7 @@
       resize: vertical;
     }
 
-    button#export-button {
+    button {
       background: #d86623;
       color: #fff;
       border: none;
@@ -194,7 +197,7 @@
       transition: background 0.3s;
     }
 
-    button#export-button:hover {
+    button:hover {
       background: #a8430d;
     }
 
@@ -359,10 +362,16 @@
             >
           </div>
         </div>
-        <button
+        <!-- 匯出 HTML 檔案 -->
+        <!-- <button
           id="export-button"
           @click="exportData"
-        >匯出 HTML 檔案</button>
+        >匯出 HTML 檔案</button> -->
+        <!-- 新增：匯出版型壓縮檔 -->
+        <button
+          id="export-zip-button"
+          @click="exportZip"
+        >匯出版型壓縮檔</button>
       </div>
     </div>
     <script>
@@ -417,55 +426,82 @@
             this.variantType = this.selectedVariant;
           },
           exportData() {
-            // 如果姓名欄位為空，則提示使用者先填寫姓名
             if (!this.userName.trim()) {
               alert("請先填寫姓名才可匯出畫面！！");
               return;
             }
-            // 複製整個文件（包含 HTML 與 CSS）
             const clonedDoc = document.documentElement.cloneNode(true);
-
             const templateTitle = clonedDoc.querySelector('#app>h1');
             if (templateTitle) {
-              templateTitle.textContent = `${this.userName.trim()} - ${templateTitle.textContent}`
+              templateTitle.textContent = `${this.userName.trim()} - ${templateTitle.textContent}`;
             }
-
             const pageTitle = clonedDoc.querySelector('title');
             if (pageTitle) {
-              pageTitle.textContent = `${this.userName.trim()} 的需求`
+              pageTitle.textContent = `${this.userName.trim()} 的需求`;
             }
-
-            // 移除複製內容中的 #right-column 元素
             const rightColumn = clonedDoc.querySelector('#right-column');
             if (rightColumn) {
               rightColumn.remove();
             }
-
-            // 調整 .container 的寬度為 50vw
             const container = clonedDoc.querySelector('.container');
             if (container) {
               container.style.width = '50vw';
             }
-
-            // 調整 #left-column 的寬度為 100%
             const leftColumn = clonedDoc.querySelector('#left-column');
             if (leftColumn) {
               leftColumn.style.width = '100%';
             }
-
-            // 取得修改後的 HTML 字串（加上 DOCTYPE）
             const modifiedHTML = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
-
-            // 透過 Blob 產生檔案，並建立下載連結
             const blob = new Blob([modifiedHTML], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
             const now = new Date();
             const formattedDate = now.toISOString().replace(/[:]/g, '-').split('.')[0];
+            const a = document.createElement('a');
+            a.href = url;
             a.download = `${this.userName.trim()}_${formattedDate}_exported_design.html`;
             a.click();
             URL.revokeObjectURL(url);
+          },
+          exportZip() {
+            if (!this.userName.trim()) {
+              alert("請先填寫姓名才可匯出畫面！！");
+              return;
+            }
+            const clonedDoc = document.documentElement.cloneNode(true);
+            const templateTitle = clonedDoc.querySelector('#app>h1');
+            if (templateTitle) {
+              templateTitle.textContent = `${this.userName.trim()} - ${templateTitle.textContent}`;
+            }
+            const pageTitle = clonedDoc.querySelector('title');
+            if (pageTitle) {
+              pageTitle.textContent = `${this.userName.trim()} 的需求`;
+            }
+            const rightColumn = clonedDoc.querySelector('#right-column');
+            if (rightColumn) {
+              rightColumn.remove();
+            }
+            const container = clonedDoc.querySelector('.container');
+            if (container) {
+              container.style.width = '50vw';
+            }
+            const leftColumn = clonedDoc.querySelector('#left-column');
+            if (leftColumn) {
+              leftColumn.style.width = '100%';
+            }
+            const modifiedHTML = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
+            const now = new Date();
+            const formattedDate = now.toISOString().replace(/[:]/g, '-').split('.')[0];
+            // 使用 JSZip 建立壓縮檔並加入 HTML 檔案
+            const zip = new JSZip();
+            zip.file(`${this.userName.trim()}_${formattedDate}_exported_design.html`, modifiedHTML);
+            zip.generateAsync({ type: "blob" }).then((zipBlob) => {
+              const url = URL.createObjectURL(zipBlob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${this.userName.trim()}_${formattedDate}_exported_design.zip`;
+              a.click();
+              URL.revokeObjectURL(url);
+            });
           }
         }
       }).mount('#app');
