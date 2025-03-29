@@ -414,7 +414,64 @@
             }
             const zoneElement = document.getElementById(currentZoneId);
             const clonedElement = zoneElement.cloneNode(true);
-            // Build export HTML document
+            // Added style content to match current #left-column styling
+            const styleContent = `
+              #left-column {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+              }
+              #left-column .main-title,
+              #left-column .contact {
+                height: 60px;
+              }
+              .main-title {
+                font-size: 24px;
+                background: #93c0eb;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              .info-section-a,
+              .info-section-b,
+              .info-section-c,
+              .info-section-d {
+                font-size: 18px;
+                background: #e2e8f0;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              .contact {
+                font-size: 18px;
+                background: #a8e4c1;
+                padding: 15px;
+                border-radius: 8px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              .variant-1 {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                flex: 1;
+              }
+              .variant-2 {
+                display: flex;
+                gap: 15px;
+                flex: 1;
+              }`;
+            // Build export HTML document with added style block
             const exportHTML = `
 <!DOCTYPE html>
 <html lang="zh-TW">
@@ -422,6 +479,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>匯出設計稿</title>
+    <style>${styleContent}</style>
   </head>
   <body>
     ${clonedElement.outerHTML}
