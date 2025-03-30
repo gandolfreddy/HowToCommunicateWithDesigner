@@ -395,6 +395,15 @@
           this.changeLayout();
         },
         methods: {
+          getTaipeiTimezone() {
+            const utcDate = new Date();
+            const arr = utcDate.toISOString().split('');
+            const taipeiHour = Number(arr[arr.indexOf('T') + 1]) * 10 + Number(arr[arr.indexOf('T') + 2]) * 1 + 8;
+            arr[arr.indexOf('T') + 1] = String(Math.floor(taipeiHour / 10));
+            arr[arr.indexOf('T') + 2] = String(taipeiHour % 10);
+            const utcDateISOString = arr.join('').slice(0, 19);
+            return utcDateISOString.replace(/:/g, '_').replace('Z', '');
+          },
           setInfo(title, infoA, infoB, infoC, infoD, contact) {
             this.mainTitle = title;
             this.infoSectionA = infoA;
@@ -454,8 +463,7 @@
             const modifiedHTML = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
             const blob = new Blob([modifiedHTML], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
-            const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
-            const formattedDate = now.toISOString().replace(/[:]/g, '-').split('.')[0];
+            const formattedDate = this.getTaipeiTimezone();
             const a = document.createElement('a');
             a.href = url;
             a.download = `${this.userName.trim()}_${formattedDate}_exported_design.html`;
@@ -489,8 +497,7 @@
               leftColumn.style.width = '100%';
             }
             const modifiedHTML = '<!DOCTYPE html>\n' + clonedDoc.outerHTML;
-            const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
-            const formattedDate = now.toISOString().replace(/[:]/g, '-').split('.')[0];
+            const formattedDate = this.getTaipeiTimezone();
             // 使用 JSZip 建立壓縮檔並加入 HTML 檔案
             const zip = new JSZip();
             zip.file(`${this.userName.trim()}_${formattedDate}_exported_design.html`, modifiedHTML);
